@@ -3,599 +3,531 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr. Lucky Straw</title>
-    <!-- Tailwind CSS -->
+    <title>The Lucky Straw Adventure: Vocabulary & Story Quest</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        body {
+            /* Using your exact BACKGROUND.png as the main page background */
+            background: url('BACKGROUND.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
         }
-        @keyframes walk-bounce {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            25% { transform: translateY(-8px) rotate(-1deg); }
-            75% { transform: translateY(-8px) rotate(1deg); }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) translateX(50px) rotate(360deg); opacity: 0.8; }
         }
-        @keyframes trade-right {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30vw, -10vh) scale(1.5) rotate(15deg); }
-            100% { transform: translate(50vw, 0) scale(1); }
-        }
-        @keyframes trade-left {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-30vw, -10vh) scale(1.5) rotate(-15deg); }
-            100% { transform: translate(-50vw, 0) scale(1); }
-        }
-        @keyframes blink {
-            0%, 96%, 100% { transform: scaleY(1); }
-            98% { transform: scaleY(0.1); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        @keyframes pop-in {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(70px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(70px) rotate(-360deg); }
-        }
-        @keyframes confetti-fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-        }
-        
-        .animate-walk { animation: walk-bounce 1s infinite; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animating-trade-right { animation: trade-right 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .animating-trade-left { animation: trade-left 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        .animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .animate-orbit { animation: orbit 3s linear infinite; }
-
-        .confetti-particle {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            z-index: 50;
+        .petal {
+            position: fixed;
+            background-color: #ffb7c5;
+            border-radius: 150% 0 150% 0;
+            animation: fall linear infinite;
+            z-index: 2;
+            pointer-events: none;
+            box-shadow: 0 0 5px rgba(255, 183, 197, 0.8);
         }
     </style>
 </head>
-<body class="w-full h-screen flex flex-col font-sans overflow-hidden bg-[#87CEFA] select-none relative">
+<body class="relative text-gray-800 pb-16">
 
-    <!-- Traditional Peaceful Japanese Folk Music Audio -->
-    <audio id="bg-audio" loop src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Kuroda-bushi_-_Japanese_traditional_folk_song.ogg"></audio>
+    <!-- Falling Petals Background Effect -->
+    <div id="petals-container"></div>
 
-    <!-- Audio Button -->
-    <button id="audio-btn" class="absolute top-4 left-4 z-50 bg-white/90 hover:bg-white text-[#2b2d42] px-3 py-2 md:px-4 md:py-3 rounded-full shadow-lg transition-transform hover:scale-110 border-2 border-[#87CEFA] font-bold flex items-center gap-2 pointer-events-auto">
-        <span id="audio-icon" class="text-xl">🔇</span>
-        <span id="audio-text" class="text-xs md:text-sm">Music Off</span>
-    </button>
-
-    <!-- SCROLLING WORLD -->
-    <div id="world-container" class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div id="scrolling-world" class="absolute top-0 left-0 h-full flex transition-transform ease-in-out" style="transition-duration: 1.5s;">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-pink-500/90 via-rose-500/90 to-amber-500/90 backdrop-blur-md text-white shadow-lg py-6 px-4 relative z-10">
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">Interactive Learning Quest</span>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-wide drop-shadow-md">🌸 The Lucky Straw Adventure 🌸</h1>
+            <p class="text-pink-100 mt-2 text-sm md:text-base font-medium">Horizontal vocabulary explorer, trade challenge, and story & UAE connection review quiz!</p>
         </div>
-        
-        <!-- Shobei Character (Fixed horizontally, bobbing) -->
-        <div class="absolute bottom-[22vh] left-[10%] md:left-[15%] w-[35vw] max-w-[240px] h-[40vh] flex items-end justify-center z-20 animate-walk">
-            <div id="shobei-character" class="w-full h-full flex items-end justify-center drop-shadow-2xl">
-                <img src="SHOBEI.png" alt="Shobei" class="max-h-[38vh] w-auto object-contain drop-shadow-2xl" onerror="this.onerror=null;this.src='https://placehold.co/200x400/d4a373/2b2d42?text=SHOBEI';">
-            </div>
-            
-            <!-- Catchable Item (Dragonfly orbiting) -->
-            <div id="shobei-orbit-item" class="absolute top-[10%] left-[50%] w-16 h-16 -translate-x-1/2 -translate-y-1/2 z-50 animate-orbit hidden">
-            </div>
+    </header>
 
-            <!-- Shobei Held Item -->
-            <div id="shobei-held-item" class="absolute top-[50%] left-[65%] w-16 h-16 md:w-20 md:h-20 -translate-x-1/2 -translate-y-1/2 z-30 hidden">
-            </div>
+    <!-- Navigation Tabs -->
+    <div class="max-w-4xl mx-auto px-4 mt-6 relative z-10">
+        <div class="flex flex-wrap justify-center gap-2 bg-white/90 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-pink-100">
+            <button onclick="switchTab('vocab')" id="btn-vocab" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all bg-rose-500 text-white shadow-md">📚 Horizontal Vocabulary</button>
+            <button onclick="switchTab('game')" id="btn-game" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all bg-white/80 text-gray-700 hover:bg-pink-100">🎮 Trade-Up Challenge</button>
+            <button onclick="switchTab('quiz')" id="btn-quiz" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all bg-white/80 text-gray-700 hover:bg-pink-100">🧠 Story & UAE Quiz</button>
         </div>
     </div>
 
-    <!-- ==================== STORY MODE UI ==================== -->
-    <div id="story-ui" class="absolute bottom-0 left-0 w-full h-[32vh] min-h-[190px] max-h-[300px] flex items-center justify-center p-3 z-20 pointer-events-auto" style="background: linear-gradient(to bottom, transparent 0%, #1a1a24 100%); display: flex;">
-        <div class="w-full max-w-5xl h-full bg-white/95 rounded-2xl md:rounded-3xl p-3 md:p-6 flex items-center gap-2 md:gap-6 shadow-[0_0_30px_rgba(0,0,0,0.5)] border-4 border-[#e9c46a]">
-            
-            <!-- Prev Button -->
-            <button id="prev-btn" class="shrink-0 w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center text-lg md:text-2xl font-bold transition-all bg-gray-200 text-gray-400 opacity-50">
-                ◀
-            </button>
+    <main class="max-w-5xl mx-auto px-4 mt-8 relative z-10">
 
-            <!-- Story Text -->
-            <div class="flex-grow h-full flex flex-col justify-center text-center px-1 md:px-3 overflow-y-auto">
-                <p id="story-text" class="text-xs sm:text-sm md:text-base lg:text-lg text-[#2b2d42] font-bold leading-snug md:leading-normal m-auto"></p>
+        <!-- SECTION 1: HORIZONTAL STEP-BY-STEP VOCABULARY -->
+        <section id="tab-vocab" class="space-y-6">
+            <div class="text-center">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-rose-700 bg-white/80 backdrop-blur-sm py-2 px-6 rounded-2xl inline-block shadow-md">Horizontal Story Vocabulary Journey</h2>
+                <p class="text-gray-900 font-semibold text-sm md:text-base mt-2 bg-white/70 backdrop-blur-sm py-1 px-4 rounded-xl inline-block">Look at the story pictures one by one, reveal the word, and use the arrow buttons to move!</p>
             </div>
 
-            <!-- Next / Action Button -->
-            <button id="next-btn" class="shrink-0 px-3 md:px-5 h-10 md:h-14 rounded-xl flex items-center justify-center text-xs sm:text-sm md:text-lg font-black uppercase tracking-wider transition-all bg-[#2a9d8f] text-white shadow-[0_4px_0_#21867a] hover:translate-y-1 active:translate-y-2">
-                Next ▶
-            </button>
-        </div>
-    </div>
-
-    <!-- ==================== QUIZ MODE UI ==================== -->
-    <div id="quiz-ui" class="absolute inset-0 z-30 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4 hidden">
-        <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden border-4 md:border-6 border-[#8ecae6] animate-pop-in max-h-[95vh] flex flex-col">
-            <div class="bg-[#8ecae6] text-[#023e8a] py-2 md:py-3 text-center shrink-0">
-                <h2 class="text-xl md:text-2xl font-black tracking-wider uppercase">Quiz Time! 🌟</h2>
-                <p id="quiz-progress" class="text-xs md:text-sm font-bold mt-0.5">Question 1 of 10</p>
-            </div>
-            <div class="p-3 md:p-6 overflow-y-auto flex-grow flex flex-col justify-between">
-                
-                <!-- Quiz Image Container -->
-                <div id="quiz-image-container" class="w-full flex justify-center mb-2 md:mb-3 hidden shrink-0">
-                    <img id="quiz-image" src="" alt="Question Illustration" class="max-h-28 sm:max-h-36 md:max-h-44 w-auto object-contain rounded-xl border-2 md:border-4 border-[#e9c46a] shadow-md bg-white" />
+            <!-- Horizontal Container Card -->
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-pink-200 max-w-xl mx-auto relative">
+                <div class="flex justify-between items-center mb-4">
+                    <span id="vocab-progress-badge" class="bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Word 1 of 8</span>
+                    <span id="vocab-score-badge" class="text-rose-600 font-bold text-sm">Unlocked: 0 / 8</span>
                 </div>
-                
-                <!-- Question Text -->
-                <h3 id="quiz-question" class="text-sm sm:text-base md:text-xl text-center font-bold text-[#2b2d42] mb-3 md:mb-4 shrink-0"></h3>
-                
-                <!-- Options / Textarea Container -->
-                <div id="quiz-interactive-area" class="flex flex-col gap-2.5">
+
+                <!-- Picture Frame -->
+                <div class="overflow-hidden rounded-2xl mb-6 h-64 border-2 border-pink-100 shadow-inner bg-pink-50 flex items-center justify-center">
+                    <img id="vocab-img" src="" alt="Vocabulary Illustration" onerror="this.src='https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?auto=format&fit=crop&w=600&q=80'" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                </div>
+
+                <!-- Word Reveal / Guess Box -->
+                <div id="vocab-action-area" class="text-center mb-5">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <!-- Meaning & Example -->
+                <div class="bg-pink-50/80 border border-pink-100 rounded-2xl p-4 mb-4 text-center">
+                    <p class="text-gray-800 text-base mb-2"><strong>Meaning:</strong> <span id="vocab-def"></span></p>
+                    <p class="text-gray-700 text-sm italic mb-3">"<span id="vocab-example"></span>"</p>
+                    <div class="bg-white border border-pink-200 rounded-xl p-2.5 text-xs text-rose-800 font-semibold inline-block shadow-sm">
+                        🎬 <strong>Action:</strong> <span id="vocab-action"></span>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
+                    <button onclick="prevVocabWord()" id="prev-vocab-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-5 rounded-xl text-sm transition-all shadow-sm">◀ Previous</button>
+                    <button onclick="nextVocabWord()" id="next-vocab-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-6 rounded-xl text-sm transition-all shadow-md">Next Word ➔</button>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- ==================== CELEBRATION MODE UI ==================== -->
-    <div id="celebration-ui" class="absolute inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 hidden">
-        <div id="confetti-container" class="absolute inset-0 z-40 pointer-events-none overflow-hidden"></div>
-        <div class="w-full max-w-xl bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 text-center shadow-2xl border-[8px] border-[#ffb703] animate-pop-in relative z-50">
-            <h1 class="text-3xl md:text-5xl font-black text-[#ff0a54] mb-2 drop-shadow-md">
-                Amazing Job! 🎉
-            </h1>
-            <p id="final-score" class="text-xl md:text-2xl text-[#2b2d42] font-bold mb-4">
-                You scored X out of Y!
-            </p>
-            <div class="flex justify-center gap-4 mb-4">
-                <div id="score-emoji" class="w-20 h-20 md:w-28 md:h-28 bg-[#e9c46a] rounded-full flex items-center justify-center shadow-inner text-4xl md:text-5xl">
-                    🌟
+        <!-- SECTION 2: GAME -->
+        <section id="tab-game" class="hidden space-y-6">
+            <div class="text-center">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-amber-700 bg-white/80 backdrop-blur-sm py-2 px-6 rounded-2xl inline-block shadow-md">🎮 The Great Trade-Up Challenge</h2>
+                <p class="text-gray-900 font-semibold text-sm md:text-base mt-2 bg-white/70 backdrop-blur-sm py-1 px-4 rounded-xl inline-block">Read the story scenario and pick the matching vocabulary word!</p>
+            </div>
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-2 border-amber-200 max-w-2xl mx-auto text-center">
+                <div class="flex justify-between items-center mb-4 text-sm font-bold text-gray-500">
+                    <span id="game-progress">Scenario 1 of 8</span>
+                    <span id="game-score" class="text-amber-600 bg-amber-50 px-3 py-1 rounded-full">Score: 0 / 8</span>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-6 shadow-inner">
+                    <p id="game-scenario" class="text-lg md:text-xl font-medium text-gray-800"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="game-options"></div>
+                <div id="game-feedback" class="mt-4 text-base font-bold hidden"></div>
+                <button id="next-scenario-btn" onclick="nextScenario()" class="mt-6 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all hidden">Next Scenario ➔</button>
+            </div>
+        </section>
+
+        <!-- SECTION 3: QUIZ (Mr. Lucky Straw + UAE Relatable Questions) -->
+        <section id="tab-quiz" class="hidden space-y-6">
+            <div class="text-center">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-purple-700 bg-white/80 backdrop-blur-sm py-2 px-6 rounded-2xl inline-block shadow-md">🧠 Story & UAE Connections Quiz</h2>
+                <p class="text-gray-900 font-semibold text-sm md:text-base mt-2 bg-white/70 backdrop-blur-sm py-1 px-4 rounded-xl inline-block">Test your knowledge on Shobei's journey and Emirati traditions!</p>
+            </div>
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-2 border-purple-200 max-w-3xl mx-auto">
+                <div class="flex justify-between items-center mb-4 text-sm font-bold text-gray-500">
+                    <span id="quiz-progress">Question 1 of 9</span>
+                    <span id="quiz-score" class="text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Score: 0 / 9</span>
+                </div>
+                <div class="bg-purple-50 border border-purple-200 rounded-2xl p-6 mb-6">
+                    <span id="quiz-category" class="text-xs font-bold uppercase tracking-wider text-purple-500 bg-white px-2.5 py-1 rounded-md border border-purple-100 inline-block mb-2"></span>
+                    <p id="quiz-question" class="text-lg md:text-xl font-semibold text-gray-800"></p>
+                </div>
+                <div class="space-y-3" id="quiz-options"></div>
+                <div id="quiz-explanation" class="mt-4 p-4 rounded-xl text-sm font-medium hidden"></div>
+                <div class="flex justify-end mt-6">
+                    <button id="next-quiz-btn" onclick="nextQuizQuestion()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all hidden">Next Question ➔</button>
                 </div>
             </div>
-            <p class="text-sm md:text-base text-[#023e8a] font-medium mb-6 px-2">
-                Remember, just like Mr. Lucky Straw, a kind heart and sharing with others is the greatest treasure of all!
-            </p>
-            <button id="reset-btn" class="bg-[#2a9d8f] text-white px-8 py-3.5 rounded-xl text-lg md:text-xl font-black shadow-[0_6px_0_#21867a] hover:translate-y-1 active:translate-y-2 transition-all uppercase tracking-widest pointer-events-auto">
-                Read Again 📖
-            </button>
-        </div>
-    </div>
+        </section>
 
+    </main>
+
+    <!-- JavaScript Logic -->
     <script>
-        const ASSETS = {
-            ItemStraw: 'STRAW.png',
-            ItemDragonfly: 'DRAGON FLY.png',
-            ItemOranges: 'ORANGES.png',
-            ItemCloth: 'FABRIC.png',
-            ItemCoins: 'COIN.png'
-        };
+        // Falling Petals Generation
+        const petalsContainer = document.getElementById('petals-container');
+        for (let i = 0; i < 35; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = `${Math.random() * 100}vw`;
+            petal.style.top = `-${Math.random() * 20}vh`;
+            const size = Math.random() * 12 + 10;
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size * 1.4}px`;
+            petal.style.animationDuration = `${Math.random() * 6 + 4}s`;
+            petal.style.animationDelay = `${Math.random() * 5}s`;
+            petalsContainer.appendChild(petal);
+        }
 
-        const SCENES = [
-            {
-                text: "Once upon a time, long ago, there was a kind-hearted young man named Shobei who lived in a village in Japan. One day on his way home, Shobei fell down the steps that led to his village. He tumbled over and over on the ground. When he ﬁnally stopped tumbling, Shobei realised that he had caught a piece of straw in his hand. ‘Well, well,’ he said, ‘a piece of straw is a worthless thing, but I will not throw it away.’",
-                npcImage: null,
-                shobeiHolds: 'ItemStraw',
-                npcHolds: null,
-                hasTrade: false
+        // Vocabulary Data with exact local filenames matching your folder
+        const vocabData = [
+            { 
+                word: "tumbled", 
+                def: "Fell downwards, hitting the ground several times.", 
+                example: "Shobei tumbled down the grassy hill.", 
+                action: "Roll hands in circles like rolling down a hill!", 
+                img: "Tumbled.png" 
             },
-            {
-                text: "As Shobei went walking along, holding the straw in his hand, a dragonﬂy came ﬂying in circles around his head. ‘What an insect!’ he said. And he caught the dragonﬂy and tied the straw around its tail. Shobei went on walking, holding the dragonﬂy. He met a woman walking with her son. When the little boy saw the dragonﬂy, he started crying.",
-                npcImage: null,
-                shobeiHolds: 'ItemStraw',
-                npcHolds: null,
-                hasTrade: false,
-                hasCatch: true
+            { 
+                word: "worthless", 
+                def: "Having no value at all.", 
+                example: "At first, a piece of dry straw seemed completely worthless.", 
+                action: "Cross arms in an 'X' shape!", 
+                img: "Worthless.png" 
             },
-            {
-                text: "‘Mother, I want that dragonﬂy,’ he said. ‘Please, please, please!’ ‘Here you are, little boy, you can have my dragonﬂy!’ said Shobei, handing the boy the straw. To thank Shobei, the little boy’s mother gave him three oranges. Shobei thanked her.",
-                npcImage: 'BOY CRY.png',
-                shobeiHolds: 'ItemDragonfly',
-                npcHolds: 'ItemOranges',
-                hasTrade: true
+            { 
+                word: "dragonfly", 
+                def: "An insect with a long body and two pairs of wings.", 
+                example: "He caught a dragonfly to keep the crying baby happy.", 
+                action: "Flutter hands like wings in the air!", 
+                img: "DRAGON FLY.png" 
             },
-            {
-                text: "Then Shobei met a peddler resting by the road. The peddler was very thirsty. There were no streams nearby. Shobei felt sorry for him. He gave him the three oranges so that he could drink the juice. The peddler was very happy. He gave Shobei three pieces of cloth that he was carrying to the market. Shobei thanked him.",
-                npcImage: 'PEDLER.png',
-                shobeiHolds: 'ItemOranges',
-                npcHolds: 'ItemCloth',
-                hasTrade: true
+            { 
+                word: "peddler", 
+                def: "A person who travels from place to place trying to sell small objects.", 
+                example: "Shobei traveled as a peddler with his goods.", 
+                action: "Pretend to carry a heavy basket on your shoulders!", 
+                img: "pedler.png" 
             },
-            {
-                text: "As Shobei was walking along, he came across a carriage with many attendants. The carriage belonged to a princess who was going to the town. The princess saw the beautiful pieces of cloth that Shobei was carrying. She said, ‘Oh, what pretty pieces of cloth you have there! Please let me have them.’ Shobei gave the princess the three pieces of cloth. In exchange, she gave him a large bag of coins.",
-                npcImage: 'PRINCESS.png',
-                shobeiHolds: 'ItemCloth',
-                npcHolds: 'ItemCoins',
-                hasTrade: true
+            { 
+                word: "attendants", 
+                def: "People who live and travel with an important person.", 
+                example: "The wealthy noblewoman traveled with her attendants.", 
+                action: "Stand straight and bow politely!", 
+                img: "Attendants.png" 
             },
-            {
-                text: "Shobei took the coins and bought ﬁelds with them. Then he divided the ﬁelds among the people of his village. Thus everyone had their own piece of land. They all worked hard. The village became very prosperous and many new houses were built. Everyone was amazed when they remembered that all this wealth came from the piece of straw that Shobei had picked up. Shobei became the most important man in the village and everyone respected him. They addressed him as ‘Mr Lucky Straw’.",
-                npcImage: null,
-                shobeiHolds: 'ItemCoins',
-                npcHolds: null,
-                hasTrade: false
+            { 
+                word: "prosperous", 
+                def: "Rich and successful.", 
+                example: "By the end of the story, Shobei became prosperous.", 
+                action: "Make a big money bags sign with your hands!", 
+                img: "Prosperous.png .png" 
+            },
+            { 
+                word: "amazed", 
+                def: "Very surprised.", 
+                example: "Shobei was amazed when he opened the treasure chest.", 
+                action: "Drop your jaw open in total shock!", 
+                img: "Amazed .png" 
+            },
+            { 
+                word: "addressed", 
+                def: "Used a particular name to speak to someone.", 
+                example: "The horseman addressed Shobei by his name.", 
+                action: "Point forward as if calling someone by name!", 
+                img: "Addressed.png" 
             }
         ];
 
-        const QUIZ_QUESTIONS = [
-            { type: 'multiple-choice', question: "What did Shobei tie his piece of straw to?", options: ["A tree branch", "A dragonfly", "A little dog"], answerIndex: 1, imageKey: 'SHOBEI.png' },
-            { type: 'multiple-choice', question: "What did the mother give Shobei in exchange for the dragonfly?", options: ["Three oranges", "Gold coins", "A new hat"], answerIndex: 0, imageKey: 'SHOBEI.png' },
-            { type: 'multiple-choice', question: "Who gave Shobei the beautiful silk cloth?", options: ["The Princess", "The little boy", "The tired Peddler"], answerIndex: 2, imageKey: 'SHOBEI.png' },
-            { type: 'multiple-choice', question: "Moral of the Story: What can we learn from Shobei?", options: ["Never pick up straw from the ground.", "Always keep everything for yourself.", "Being kind and sharing brings good luck to everyone."], answerIndex: 2, imageKey: 'SHOBEI.png' },
-            { type: 'open-ended', question: "How did Shobei help his village grow and become prosperous?", imageKey: 'SHOBEI.png', possibleAnswer: "He used the wealth he received to buy fields and divided the land among the people, allowing everyone to work hard and build new houses." },
-            { type: 'open-ended', question: "How did Sheikh Zayed bin Sultan Al Nahyan help the UAE develop and become a prosperous country?", imageKey: 'Sheikh Zayed.jpeg', possibleAnswer: "He used the country's resources wisely to build schools, hospitals, and infrastructure, focusing on the well-being and education of his people." },
-            { type: 'open-ended', question: "How is the growth of Shobei’s village similar to the development of the UAE?", imageKey: 'Sheikh Zayed.jpeg', possibleAnswer: "Both started from humble beginnings and grew into prosperous, thriving communities through hard work, unity, and wise, generous leadership." },
-            { type: 'open-ended', question: "What can we learn from Shobei and Sheikh Zayed about helping people and building a better community?", imageKey: 'Sheikh Zayed.jpeg', possibleAnswer: "We learn that true leadership means being generous, sharing resources, and caring for others, which brings success and happiness to everyone." },
-            { type: 'open-ended', question: "Critical Thinking: Why do you think Shobei decided to give away his items instead of keeping them for himself?", imageKey: 'SHOBEI.png', possibleAnswer: "Shobei was kind-hearted and cared more about helping others feel happy and comfortable than holding onto things for himself." },
-            { type: 'open-ended', question: "Compare Shobei's village and the UAE: How did both progress from humble beginnings into thriving communities through vision and leadership?", imageKey: 'https://placehold.co/400x300/d4a373/2b2d42?text=Shobei+%26+Sheikh+Zayed', possibleAnswer: "Both Shobei's village and the UAE began simply, but through visionary, generous leaders (Shobei and Sheikh Zayed) who shared resources and cared for their people, they grew into prosperous, modern, and happy communities." }
+        const gameScenarios = [
+            { scenario: "While running down the grassy hill, Shobei tripped and fell downwards, hitting the ground several times!", answer: "tumbled" },
+            { scenario: "At first, people thought a simple piece of dry grass was completely useless and had no value.", answer: "worthless" },
+            { scenario: "Shobei caught an insect with a long body and two pairs of wings to keep a crying baby quiet.", answer: "dragonfly" },
+            { scenario: "Shobei walked from village to village trying to sell small items as a traveling merchant.", answer: "peddler" },
+            { scenario: "The noblewoman was surrounded by royal helpers who lived and traveled everywhere with her.", answer: "attendants" },
+            { scenario: "Because of his clever trades, Shobei became very rich, successful, and well-off.", answer: "prosperous" },
+            { scenario: "Shobei's eyes went wide with wonder when he saw the giant chest full of gold and jewels!", answer: "amazed" },
+            { scenario: "The traveler spoke directly to him using his personal name: 'Shobei!'", answer: "addressed" }
         ];
 
-        let appMode = 'story';
-        let sceneIndex = 0;
-        let tradeStatus = 'pre-trade'; 
-        let isPlayingAudio = false;
-        let isDragonflyCaught = false;
+        // Quiz Data: Story Questions + Relatable UAE Connection Questions
+        const quizData = [
+            {
+                category: "Story Question 1",
+                question: "What did Shobei find when he stopped tumbling?",
+                options: ["A bag of gold coins", "A piece of straw", "An orange", "A dragonfly"],
+                correct: 1,
+                explanation: "Correct! When Shobei stopped tumbling down the hill, he found a piece of straw."
+            },
+            {
+                category: "Story Question 2",
+                question: "How did Shobei ensure the dragonfly did not bother him?",
+                options: ["He tied it to a piece of straw", "He swatted it away", "He let it go outside", "He put it in a box"],
+                correct: 0,
+                explanation: "Correct! He caught the dragonfly and tied it gently to the piece of straw."
+            },
+            {
+                category: "Story Question 3",
+                question: "Why did the boy’s mother give Shobei three oranges?",
+                options: ["She wanted to sell them", "She traded them because the buzzing dragonfly kept her crying baby happy and amused", "She owed him a favor", "She found them on the road"],
+                correct: 1,
+                explanation: "Correct! The buzzing dragonfly amused her crying baby, so she gratefully traded three oranges for it."
+            },
+            {
+                category: "Story Question 4",
+                question: "Why did Shobei feel sorry for the peddler?",
+                options: ["Because the peddler was carrying too many heavy oranges and was thirsty", "Because he lost his house", "Because he lost his horse", "Because he had no family"],
+                correct: 0,
+                explanation: "Correct! He shared his oranges with the exhausted, thirsty traveler."
+            },
+            {
+                category: "Story Question 5",
+                question: "Where was the princess / noblewoman going?",
+                options: ["To town", "To the mountains", "Across the sea", "To the temple"],
+                correct: 0,
+                explanation: "Correct! She was traveling with her attendants to town."
+            },
+            {
+                category: "Story Question 6",
+                question: "What amazed the villagers?",
+                options: ["Seeing Shobei return as a prosperous man with immense wealth", "Seeing a giant dragonfly", "Seeing a flying horse", "Seeing a lost straw"],
+                correct: 0,
+                explanation: "Correct! The villagers were amazed to see Shobei return wealthy and prosperous."
+            },
+            {
+                category: "UAE Connection 1",
+                question: "Just like Shobei traveled from place to place as a peddler trading goods, what were the traditional wooden sailing vessels used by Emirati pearl divers and merchants to travel across the sea?",
+                options: ["Speedboats", "Dhows", "Gondolas", "Submarines"],
+                correct: 1,
+                explanation: "Correct! Dhows are the traditional wooden trading vessels deeply rooted in UAE maritime history."
+            },
+            {
+                category: "UAE Connection 2",
+                question: "Shobei started with a simple, 'worthless' piece of straw and used clever resourcefulness to succeed. In the UAE before oil, what did ancestors use to build summer houses called 'Arish'?",
+                options: ["Glass and steel", "Palm fronds and mud", "Bricks and marble", "Plastic sheets"],
+                correct: 1,
+                explanation: "Correct! 'Arish' houses show incredible resourcefulness using local natural environment materials."
+            },
+            {
+                category: "UAE Connection 3",
+                question: "Shobei was kind and shared with travelers. In the UAE, what is the famous cultural value of welcoming guests and travelers with open arms, dates, and Arabic coffee (gahwa) called?",
+                options: ["Speed", "Hospitality and Generosity (Karam)", "Competition", "Silence"],
+                correct: 1,
+                explanation: "Correct! Generosity and hospitality (Karam) are foundational values across the United Arab Emirates."
+            }
+        ];
 
+        // Step-by-Step Horizontal Vocabulary Logic
+        let currentVocabIndex = 0;
+        let unlockedWords = new Set();
+
+        function loadVocabCard() {
+            const item = vocabData[currentVocabIndex];
+            document.getElementById('vocab-progress-badge').innerText = `Word ${currentVocabIndex + 1} of ${vocabData.length}`;
+            document.getElementById('vocab-score-badge').innerText = `Unlocked: ${unlockedWords.size} / ${vocabData.length}`;
+            
+            const imgEl = document.getElementById('vocab-img');
+            imgEl.src = item.img;
+            
+            document.getElementById('vocab-def').innerText = item.def;
+            document.getElementById('vocab-example').innerText = item.example;
+            document.getElementById('vocab-action').innerText = item.action;
+
+            const actionArea = document.getElementById('vocab-action-area');
+            if (unlockedWords.has(currentVocabIndex)) {
+                actionArea.innerHTML = `<h3 class="text-3xl font-extrabold text-rose-600 uppercase tracking-wide animate-pulse">${item.word}</h3><span class="text-xs text-green-600 font-bold">✔ Unlocked!</span>`;
+            } else {
+                actionArea.innerHTML = `<button onclick="revealCurrentWord('${item.word}')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-2 px-6 rounded-xl text-sm transition-all shadow-sm">🔍 Tap to Reveal Word</button>`;
+            }
+
+            document.getElementById('prev-vocab-btn').style.visibility = currentVocabIndex === 0 ? 'hidden' : 'visible';
+            document.getElementById('next-vocab-btn').innerText = currentVocabIndex === vocabData.length - 1 ? 'Finish Journey ➔' : 'Next Word ➔';
+        }
+
+        function revealCurrentWord(word) {
+            unlockedWords.add(currentVocabIndex);
+            loadVocabCard();
+        }
+
+        function nextVocabWord() {
+            if (currentVocabIndex < vocabData.length - 1) {
+                currentVocabIndex++;
+                loadVocabCard();
+            } else {
+                alert("🎉 Amazing job! You completed the entire vocabulary journey!");
+            }
+        }
+
+        function prevVocabWord() {
+            if (currentVocabIndex > 0) {
+                currentVocabIndex--;
+                loadVocabCard();
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-rose-500', 'text-white', 'shadow-md', 'bg-amber-500', 'bg-purple-600');
+                b.classList.add('bg-white/80', 'text-gray-700');
+            });
+
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`btn-${tab}`);
+            activeBtn.classList.remove('bg-white/80', 'text-gray-700');
+            
+            if(tab === 'vocab') {
+                activeBtn.classList.add('bg-rose-500', 'text-white', 'shadow-md');
+                loadVocabCard();
+            }
+            if(tab === 'game') {
+                activeBtn.classList.add('bg-amber-500', 'text-white', 'shadow-md');
+                initGame();
+            }
+            if(tab === 'quiz') {
+                activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow-md');
+                initQuiz();
+            }
+        }
+
+        // Game Logic
+        let currentGameIndex = 0;
+        let gameScore = 0;
+        let gameAnswered = false;
+
+        function initGame() {
+            currentGameIndex = 0;
+            gameScore = 0;
+            gameAnswered = false;
+            loadGameScenario();
+        }
+
+        function loadGameScenario() {
+            gameAnswered = false;
+            const scenario = gameScenarios[currentGameIndex];
+            document.getElementById('game-progress').innerText = `Scenario ${currentGameIndex + 1} of ${gameScenarios.length}`;
+            document.getElementById('game-score').innerText = `Score: ${gameScore} / ${gameScenarios.length}`;
+            document.getElementById('game-scenario').innerText = scenario.scenario;
+            document.getElementById('game-feedback').classList.add('hidden');
+            document.getElementById('next-scenario-btn').classList.add('hidden');
+
+            let options = [scenario.answer];
+            while(options.length < 4) {
+                let randomWord = vocabData[Math.floor(Math.random() * vocabData.length)].word;
+                if(!options.includes(randomWord)) options.push(randomWord);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const optionsContainer = document.getElementById('game-options');
+            optionsContainer.innerHTML = '';
+            options.forEach(opt => {
+                optionsContainer.innerHTML += `
+                    <button onclick="checkGameAnswer(this, '${opt}', '${scenario.answer}')" class="game-opt-btn bg-white border-2 border-amber-200 hover:border-amber-400 text-gray-800 font-bold py-3 px-4 rounded-xl shadow-sm transition-all text-center capitalize">${opt}</button>
+                `;
+            });
+        }
+
+        function checkGameAnswer(button, selected, correct) {
+            if(gameAnswered) return;
+            gameAnswered = true;
+
+            const feedback = document.getElementById('game-feedback');
+            feedback.classList.remove('hidden');
+
+            if(selected === correct) {
+                button.classList.remove('bg-white', 'border-amber-200');
+                button.classList.add('bg-green-500', 'text-white', 'border-green-600');
+                feedback.innerHTML = `<span class="text-green-600">🎉 Correct! Great job matching the word!</span>`;
+                gameScore++;
+            } else {
+                button.classList.remove('bg-white', 'border-amber-200');
+                button.classList.add('bg-red-500', 'text-white', 'border-red-600');
+                feedback.innerHTML = `<span class="text-red-600">❌ Not quite! The correct word was <strong>${correct}</strong>.</span>`;
+            }
+
+            document.getElementById('game-score').innerText = `Score: ${gameScore} / ${gameScenarios.length}`;
+            document.getElementById('next-scenario-btn').classList.remove('hidden');
+        }
+
+        function nextScenario() {
+            currentGameIndex++;
+            if(currentGameIndex < gameScenarios.length) {
+                loadGameScenario();
+            } else {
+                document.getElementById('tab-game').innerHTML = `
+                    <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl border-2 border-amber-200 max-w-xl mx-auto text-center space-y-4">
+                        <h3 class="text-3xl font-bold text-amber-600">🏆 Challenge Complete! 🏆</h3>
+                        <p class="text-lg text-gray-700">You scored <strong>${gameScore}</strong> out of <strong>${gameScenarios.length}</strong>!</p>
+                        <div class="text-4xl">🌟🌸✨</div>
+                        <button onclick="initGame()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all">Play Again ↺</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Quiz Logic
         let currentQuizIndex = 0;
         let quizScore = 0;
-        let isAnswering = false;
-        let showPossibleAnswer = false;
+        let quizAnswered = false;
 
-        const DOM = {
-            audioBtn: document.getElementById('audio-btn'),
-            audioIcon: document.getElementById('audio-icon'),
-            audioText: document.getElementById('audio-text'),
-            bgAudio: document.getElementById('bg-audio'),
-            storyUI: document.getElementById('story-ui'),
-            quizUI: document.getElementById('quiz-ui'),
-            celebrationUI: document.getElementById('celebration-ui'),
-            scrollingWorld: document.getElementById('scrolling-world'),
-            shobeiOrbitItem: document.getElementById('shobei-orbit-item'),
-            shobeiHeldItem: document.getElementById('shobei-held-item'),
-            prevBtn: document.getElementById('prev-btn'),
-            nextBtn: document.getElementById('next-btn'),
-            storyText: document.getElementById('story-text'),
-            quizProgress: document.getElementById('quiz-progress'),
-            quizQuestion: document.getElementById('quiz-question'),
-            quizInteractiveArea: document.getElementById('quiz-interactive-area'),
-            quizImageContainer: document.getElementById('quiz-image-container'),
-            quizImage: document.getElementById('quiz-image'),
-            finalScore: document.getElementById('final-score'),
-            scoreEmoji: document.getElementById('score-emoji'),
-            resetBtn: document.getElementById('reset-btn'),
-            confettiContainer: document.getElementById('confetti-container')
-        };
-
-        function initApp() {
-            DOM.scrollingWorld.style.width = `${SCENES.length * 100}vw`;
-            DOM.scrollingWorld.innerHTML = SCENES.map((scene, i) => `
-                <div id="scene-wrapper-${i}" class="w-[100vw] h-full relative shrink-0">
-                    <img src="BACKGROUND.png" alt="Village Background" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none" onerror="this.onerror=null;this.src='https://placehold.co/1000x500/87cefa/ffffff?text=Japanese+Village+Background';" />
-                    ${i === 0 ? `
-                    <div class="absolute top-[8%] md:top-[12%] w-full flex justify-center z-10 animate-pop-in pointer-events-none">
-                        <h1 class="text-3xl sm:text-5xl md:text-7xl font-black text-[#d62828] uppercase tracking-widest text-center px-4" 
-                            style="-webkit-text-stroke: 2px #fff; filter: drop-shadow(0 6px 6px rgba(255,255,255,0.9));">
-                            Mr. Lucky Straw
-                        </h1>
-                    </div>` : ''}
-                    
-                    ${scene.npcImage ? `
-                    <div class="absolute bottom-[22vh] right-[10%] md:right-[20%] w-[35vw] max-w-[240px] h-[40vh] flex items-end justify-center animate-walk">
-                        <img src="${scene.npcImage}" alt="NPC" class="max-h-[38vh] w-auto object-contain drop-shadow-2xl" onerror="this.onerror=null;this.src='https://placehold.co/200x400/9c6644/ffffff?text=Character';" />
-                        <div id="npc-item-container-${i}" class="absolute top-[55%] left-[20%] w-16 h-16 md:w-20 md:h-20 -translate-x-1/2 -translate-y-1/2 z-30">
-                        </div>
-                        <div id="npc-trade-anim-container-${i}" class="absolute top-[55%] left-[20%] w-16 h-16 md:w-20 md:h-20 -translate-x-1/2 -translate-y-1/2 z-40 hidden">
-                        </div>
-                    </div>` : ''}
-                </div>
-            `).join('');
-
-            DOM.audioBtn.addEventListener('click', toggleAudio);
-            DOM.prevBtn.addEventListener('click', handlePrev);
-            DOM.nextBtn.addEventListener('click', handleNext);
-            DOM.resetBtn.addEventListener('click', resetGame);
-
-            render();
-        }
-
-        function render() {
-            DOM.storyUI.style.display = appMode === 'story' ? 'flex' : 'none';
-            DOM.quizUI.style.display = appMode === 'quiz' ? 'flex' : 'none';
-            DOM.celebrationUI.style.display = appMode === 'celebration' ? 'flex' : 'none';
-
-            if (appMode === 'story') {
-                renderStory();
-            } else if (appMode === 'quiz') {
-                renderQuiz();
-            } else if (appMode === 'celebration') {
-                renderCelebration();
-            }
-        }
-
-        function renderStory() {
-            const scene = SCENES[sceneIndex];
-            const isFirst = sceneIndex === 0;
-            const isLastScene = sceneIndex === SCENES.length - 1;
-
-            DOM.scrollingWorld.style.transform = `translateX(-${sceneIndex * 100}vw)`;
-            DOM.storyText.innerText = scene.text;
-
-            if (isFirst) {
-                DOM.prevBtn.classList.add('bg-gray-200', 'text-gray-400', 'opacity-50');
-                DOM.prevBtn.disabled = true;
-            } else {
-                DOM.prevBtn.classList.remove('bg-gray-200', 'text-gray-400', 'opacity-50');
-                DOM.prevBtn.disabled = false;
-            }
-
-            DOM.nextBtn.className = "shrink-0 px-3 md:px-5 h-10 md:h-14 rounded-xl flex items-center justify-center text-xs sm:text-sm md:text-lg font-black uppercase tracking-wider transition-all";
-            
-            if (scene.hasCatch && !isDragonflyCaught) {
-                DOM.nextBtn.classList.add('bg-[#90e0ef]', 'text-[#023e8a]', 'shadow-[0_4px_0_#0077b6]', 'animate-pulse');
-                DOM.nextBtn.innerText = "Catch! 🦋";
-            } else if (scene.hasTrade && tradeStatus === 'pre-trade') {
-                DOM.nextBtn.classList.add('bg-[#ffb703]', 'text-[#780000]', 'shadow-[0_4px_0_#fb8500]', 'animate-pulse');
-                DOM.nextBtn.innerText = "Trade! 🔄";
-            } else if (isLastScene && tradeStatus === 'post-trade') {
-                DOM.nextBtn.classList.add('bg-[#ff0a54]', 'text-white', 'shadow-[0_4px_0_#c9184a]', 'animate-bounce');
-                DOM.nextBtn.innerText = "Take Quiz! 📝";
-            } else {
-                DOM.nextBtn.classList.add('bg-[#2a9d8f]', 'text-white', 'shadow-[0_4px_0_#21867a]');
-                DOM.nextBtn.innerText = "Next ▶";
-            }
-
-            if (scene.hasCatch && !isDragonflyCaught) {
-                DOM.shobeiOrbitItem.innerHTML = `<img src="${ASSETS.ItemDragonfly}" alt="Dragonfly" class="w-full h-full object-contain animate-float" onerror="this.onerror=null;this.src='https://placehold.co/100x100/90e0ef/023e8a?text=🦋';" />`;
-                DOM.shobeiOrbitItem.classList.remove('hidden');
-            } else {
-                DOM.shobeiOrbitItem.classList.add('hidden');
-                DOM.shobeiOrbitItem.innerHTML = '';
-            }
-
-            let ShobeiCurrentItemKey = scene.shobeiHolds;
-            if (scene.hasCatch && isDragonflyCaught) {
-                ShobeiCurrentItemKey = 'ItemDragonfly';
-            } else if (tradeStatus === 'post-trade') {
-                ShobeiCurrentItemKey = scene.npcHolds || scene.shobeiHolds;
-            }
-
-            if (ShobeiCurrentItemKey && tradeStatus !== 'animating') {
-                const imgFile = ASSETS[ShobeiCurrentItemKey];
-                DOM.shobeiHeldItem.innerHTML = `<img src="${imgFile}" alt="Item" class="w-full h-full object-contain animate-float" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ffb703/000?text=Item';" />`;
-                DOM.shobeiHeldItem.classList.remove('hidden');
-                DOM.shobeiHeldItem.classList.remove('animating-trade-right');
-            } else if (scene.hasTrade && tradeStatus === 'animating') {
-                const imgFile = ASSETS[scene.shobeiHolds];
-                DOM.shobeiHeldItem.innerHTML = `<img src="${imgFile}" alt="Item" class="w-full h-full object-contain animate-float" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ffb703/000?text=Item';" />`;
-                DOM.shobeiHeldItem.classList.remove('hidden');
-                DOM.shobeiHeldItem.classList.add('animating-trade-right');
-            } else {
-                DOM.shobeiHeldItem.classList.add('hidden');
-            }
-
-            SCENES.forEach((s, i) => {
-                if (s.npcImage) {
-                    const isCurrentScene = i === sceneIndex;
-                    const npcItemContainer = document.getElementById(`npc-item-container-${i}`);
-                    const npcAnimContainer = document.getElementById(`npc-trade-anim-container-${i}`);
-                    
-                    const NpcItemKey = (isCurrentScene && tradeStatus === 'post-trade') ? s.shobeiHolds : s.npcHolds;
-
-                    if (NpcItemKey && (!isCurrentScene || tradeStatus !== 'animating')) {
-                        const imgFile = ASSETS[NpcItemKey];
-                        npcItemContainer.innerHTML = `<img src="${imgFile}" alt="Item" class="w-full h-full object-contain animate-float" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ffb703/000?text=Item';" />`;
-                        npcItemContainer.classList.remove('hidden');
-                    } else {
-                        npcItemContainer.classList.add('hidden');
-                    }
-
-                    if (isCurrentScene && s.hasTrade && tradeStatus === 'animating') {
-                        const imgFile = ASSETS[s.npcHolds];
-                        npcAnimContainer.innerHTML = `<img src="${imgFile}" alt="Item" class="w-full h-full object-contain animate-float" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ffb703/000?text=Item';" />`;
-                        npcAnimContainer.classList.remove('hidden');
-                        npcAnimContainer.classList.add('animating-trade-left');
-                    } else {
-                        npcAnimContainer.classList.add('hidden');
-                        npcAnimContainer.classList.remove('animating-trade-left');
-                    }
-                }
-            });
-        }
-
-        function toggleAudio() {
-            if (isPlayingAudio) {
-                DOM.bgAudio.pause();
-            } else {
-                DOM.bgAudio.play().catch(e => console.log("Audio play blocked by browser policy until interaction."));
-            }
-            isPlayingAudio = !isPlayingAudio;
-            DOM.audioIcon.innerText = isPlayingAudio ? '🎵' : '🔇';
-            DOM.audioText.innerText = isPlayingAudio ? 'Music On' : 'Music Off';
-        }
-
-        function handleNext() {
-            const scene = SCENES[sceneIndex];
-            const isLastScene = sceneIndex === SCENES.length - 1;
-
-            if (scene.hasCatch && !isDragonflyCaught) {
-                isDragonflyCaught = true;
-                render();
-            } else if (scene.hasTrade && tradeStatus === 'pre-trade') {
-                tradeStatus = 'animating';
-                render();
-                setTimeout(() => {
-                    tradeStatus = 'post-trade';
-                    render();
-                }, 1500); 
-            } else {
-                if (isLastScene && tradeStatus === 'post-trade') {
-                    appMode = 'quiz';
-                    currentQuizIndex = 0;
-                    quizScore = 0;
-                    render();
-                } else {
-                    sceneIndex++;
-                    tradeStatus = SCENES[sceneIndex].hasTrade ? 'pre-trade' : 'post-trade';
-                    isDragonflyCaught = false;
-                    render();
-                }
-            }
-        }
-
-        function handlePrev() {
-            if (sceneIndex > 0) {
-                sceneIndex--;
-                tradeStatus = SCENES[sceneIndex].hasTrade ? 'pre-trade' : 'post-trade';
-                isDragonflyCaught = false;
-                render();
-            }
-        }
-
-        function renderQuiz() {
-            const q = QUIZ_QUESTIONS[currentQuizIndex];
-            DOM.quizProgress.innerText = `Question ${currentQuizIndex + 1} of ${QUIZ_QUESTIONS.length}`;
-            DOM.quizQuestion.innerText = q.question;
-
-            if (q.imageKey) {
-                DOM.quizImageContainer.classList.remove('hidden');
-                DOM.quizImage.src = q.imageKey;
-                DOM.quizImage.onerror = function() {
-                    this.onerror = null;
-                    this.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Zayed_bin_Sultan_Al_Nahyan.jpg/800px-Zayed_bin_Sultan_Al_Nahyan.jpg";
-                };
-            } else {
-                DOM.quizImageContainer.classList.add('hidden');
-            }
-
-            DOM.quizInteractiveArea.innerHTML = '';
-
-            if (q.type === 'multiple-choice') {
-                q.options.forEach((option, index) => {
-                    const btn = document.createElement('button');
-                    btn.className = "text-sm sm:text-base md:text-lg font-bold py-2.5 px-4 rounded-xl border-2 md:border-4 transition-all duration-300 bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200 hover:-translate-y-0.5 shadow-[0_3px_0_#d1d5db] quiz-option-btn text-left";
-                    btn.innerText = option;
-                    btn.onclick = () => handleQuizAnswer(btn, index, q.answerIndex);
-                    DOM.quizInteractiveArea.appendChild(btn);
-                });
-            } else {
-                const wrapper = document.createElement('div');
-                wrapper.className = "flex flex-col gap-2.5 animate-pop-in";
-
-                const textarea = document.createElement('textarea');
-                textarea.className = "w-full h-20 md:h-28 p-3 text-sm md:text-base text-[#2b2d42] border-2 md:border-4 border-[#8ecae6] rounded-xl focus:outline-none focus:border-[#219ebc] resize-none";
-                textarea.placeholder = "Type your thoughts here...";
-                
-                const possibleAnswerDiv = document.createElement('div');
-                possibleAnswerDiv.className = "p-3 bg-[#e9f5db] border-2 border-[#a7c957] rounded-xl text-left animate-pop-in hidden";
-                possibleAnswerDiv.innerHTML = `
-                    <p class="font-bold text-[#386641] text-xs md:text-sm mb-0.5">Possible Answer:</p>
-                    <p class="text-[#2b2d42] text-xs md:text-sm leading-snug">${q.possibleAnswer}</p>
-                `;
-
-                const actionBtn = document.createElement('button');
-                actionBtn.className = "text-sm md:text-base font-bold py-2.5 px-4 rounded-xl border-2 md:border-4 transition-all duration-300 bg-[#ffb703] border-[#fb8500] text-[#780000] shadow-[0_3px_0_#fb8500] hover:-translate-y-0.5";
-                actionBtn.innerText = "Show Possible Answer";
-                
-                actionBtn.onclick = () => handleOpenSubmit(actionBtn, textarea, possibleAnswerDiv);
-
-                wrapper.appendChild(textarea);
-                wrapper.appendChild(possibleAnswerDiv);
-                wrapper.appendChild(actionBtn);
-                DOM.quizInteractiveArea.appendChild(wrapper);
-            }
-        }
-
-        function handleQuizAnswer(clickedBtn, selectedIndex, correctIndex) {
-            if (isAnswering) return;
-            isAnswering = true;
-
-            const buttons = document.querySelectorAll('.quiz-option-btn');
-            buttons.forEach((btn, i) => {
-                btn.disabled = true;
-                btn.className = "quiz-option-btn text-sm sm:text-base md:text-lg font-bold py-2.5 px-4 rounded-xl border-2 md:border-4 transition-all duration-300 text-left";
-                if (i === correctIndex) {
-                    btn.classList.add('bg-[#a7c957]', 'border-[#6a994e]', 'text-white', 'shadow-[0_3px_0_#386641]', 'scale-[1.02]');
-                    btn.innerHTML += ' <span class="ml-2">✅</span>';
-                } else if (i === selectedIndex && selectedIndex !== correctIndex) {
-                    btn.classList.add('bg-[#e63946]', 'border-[#a80000]', 'text-white', 'shadow-[0_3px_0_#780000]', 'animate-shake');
-                    btn.innerHTML += ' <span class="ml-2">❌</span>';
-                } else {
-                    btn.classList.add('bg-gray-100', 'border-gray-200', 'text-gray-400', 'opacity-50');
-                }
-            });
-
-            if (selectedIndex === correctIndex) quizScore++;
-
-            setTimeout(() => {
-                moveToNextQuizQuestion();
-            }, 1500);
-        }
-
-        function handleOpenSubmit(btn, textarea, possibleAnswerDiv) {
-            if (isAnswering) return;
-
-            if (!showPossibleAnswer) {
-                showPossibleAnswer = true;
-                possibleAnswerDiv.classList.remove('hidden');
-                btn.innerText = "Next Answer";
-                textarea.disabled = true;
-                return;
-            }
-
-            isAnswering = true;
-            quizScore++; 
-            btn.innerText = "Great job! 🌟";
-            btn.className = "text-sm md:text-base font-bold py-2.5 px-4 rounded-xl border-2 md:border-4 transition-all duration-300 bg-gray-200 border-gray-300 text-gray-400";
-
-            setTimeout(() => {
-                moveToNextQuizQuestion();
-            }, 800);
-        }
-
-        function moveToNextQuizQuestion() {
-            isAnswering = false;
-            showPossibleAnswer = false;
-            if (currentQuizIndex < QUIZ_QUESTIONS.length - 1) {
-                currentQuizIndex++;
-                render();
-            } else {
-                appMode = 'celebration';
-                render();
-            }
-        }
-
-        function renderCelebration() {
-            DOM.finalScore.innerText = `You scored ${quizScore} out of ${QUIZ_QUESTIONS.length}!`;
-            DOM.scoreEmoji.innerText = quizScore === QUIZ_QUESTIONS.length ? '🌟' : '👍';
-            
-            DOM.confettiContainer.innerHTML = '';
-            for(let i=0; i<40; i++) {
-                const conf = document.createElement('div');
-                conf.className = 'confetti-particle';
-                conf.style.left = `${Math.random() * 100}vw`;
-                conf.style.top = `-5vh`;
-                conf.style.backgroundColor = ['#ff0a54', '#ffb703', '#8ecae6', '#2a9d8f'][Math.floor(Math.random() * 4)];
-                conf.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear infinite`;
-                conf.style.animationDelay = `${Math.random() * 2}s`;
-                DOM.confettiContainer.appendChild(conf);
-            }
-        }
-
-        function resetGame() {
-            appMode = 'story';
-            sceneIndex = 0;
+        function initQuiz() {
             currentQuizIndex = 0;
             quizScore = 0;
-            tradeStatus = 'pre-trade';
-            isDragonflyCaught = false;
-            render();
+            quizAnswered = false;
+            loadQuizQuestion();
         }
 
-        window.onload = initApp;
+        function loadQuizQuestion() {
+            quizAnswered = false;
+            const q = quizData[currentQuizIndex];
+            document.getElementById('quiz-progress').innerText = `Question ${currentQuizIndex + 1} of ${quizData.length}`;
+            document.getElementById('quiz-score').innerText = `Score: ${quizScore} / ${quizData.length}`;
+            document.getElementById('quiz-category').innerText = q.category;
+            document.getElementById('quiz-question').innerText = q.question;
+            document.getElementById('quiz-explanation').classList.add('hidden');
+            document.getElementById('next-quiz-btn').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                optionsContainer.innerHTML += `
+                    <button onclick="checkQuizAnswer(this, ${idx}, ${q.correct})" class="quiz-opt-btn w-full text-left bg-white border-2 border-purple-200 hover:border-purple-400 text-gray-800 font-medium py-3 px-4 rounded-xl shadow-sm transition-all">${opt}</button>
+                `;
+            });
+        }
+
+        function checkQuizAnswer(button, selected, correct) {
+            if(quizAnswered) return;
+            quizAnswered = true;
+
+            const explanation = document.getElementById('quiz-explanation');
+            explanation.classList.remove('hidden');
+
+            const allButtons = document.querySelectorAll('.quiz-opt-btn');
+            allButtons.forEach((btn, idx) => {
+                if(idx === correct) {
+                    btn.classList.remove('bg-white', 'border-purple-200');
+                    btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800', 'font-bold');
+                }
+            });
+
+            if(selected === correct) {
+                button.classList.remove('bg-white', 'border-purple-200');
+                button.classList.add('bg-green-500', 'text-white', 'border-green-600', 'font-bold');
+                explanation.className = "mt-4 p-4 rounded-xl text-sm font-medium bg-green-50 text-green-800 border border-green-200";
+                explanation.innerHTML = `✅ <strong>Correct!</strong> ${quizData[currentQuizIndex].explanation}`;
+                quizScore++;
+            } else {
+                button.classList.remove('bg-white', 'border-purple-200');
+                button.classList.add('bg-red-500', 'text-white', 'border-red-600', 'font-bold');
+                explanation.className = "mt-4 p-4 rounded-xl text-sm font-medium bg-red-50 text-red-800 border border-red-200";
+                explanation.innerHTML = `❌ <strong>Not quite!</strong> ${quizData[currentQuizIndex].explanation}`;
+            }
+
+            document.getElementById('quiz-score').innerText = `Score: ${quizScore} / ${quizData.length}`;
+            document.getElementById('next-quiz-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            if(currentQuizIndex < quizData.length) {
+                loadQuizQuestion();
+            } else {
+                document.getElementById('tab-quiz').innerHTML = `
+                    <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl border-2 border-purple-200 max-w-xl mx-auto text-center space-y-4">
+                        <h3 class="text-3xl font-bold text-purple-600">🎉 Quiz Completed! 🎉</h3>
+                        <p class="text-lg text-gray-700">You scored <strong>${quizScore}</strong> out of <strong>${quizData.length}</strong>!</p>
+                        <div class="text-4xl">🏆🌟🧠</div>
+                        <button onclick="initQuiz()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all">Try Again ↺</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize Vocabulary tab on load
+        window.onload = () => {
+            switchTab('vocab');
+        };
     </script>
 </body>
 </html>
